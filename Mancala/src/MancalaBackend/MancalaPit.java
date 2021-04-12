@@ -42,4 +42,12 @@ public class MancalaPit {
         stones.addStone(stone);
         return true;
     }
+
+    /***
+     * Gets the number of stones in the pit
+     * @return number stones in the pit
+     */
+    public int getStoneCount() {
+        return stones.getStoneCount();
+    }
 }
