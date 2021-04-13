@@ -108,13 +108,12 @@ public class MancalaBoard {
     		
     		//Check if the last stone was placing on the empty pit or the mancala.    		
     		if(cluster.getStoneCount() == 0) {
-    			if(currentPit[targetPit].getContainedCluster().getStoneCount() == 1) {
+    			if(currentPit[targetPit].isMancala()) {
+    				freeTurn = true;
+    			} else if(currentPit[targetPit].getContainedCluster().getStoneCount() == 1) {
         			playerPit[BOARD_SIZE-1].addStones(opponentPit[BOARD_SIZE-2-targetPit].pullStones());
     				playerPit[BOARD_SIZE-1].addStones(currentPit[targetPit].pullStones());
         		}
-    			if(currentPit[targetPit].isMancala()) {
-    				freeTurn = true;
-    			}
     		}
     	}
     	return freeTurn;
