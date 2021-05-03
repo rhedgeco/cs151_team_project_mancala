@@ -1,8 +1,5 @@
 package MancalaBackend;
 
-import MancalaBackend.MancalaBoard.PitSize;
-import MancalaBackend.MancalaBoard.PlayerTypes;
-
 /***
  * MancalaBoard represents a mancala board and controls the flow of the game
  */
@@ -12,6 +9,10 @@ public class MancalaBoard {
     private PlayerTypes turn = PlayerTypes.PlayerA;
     private MancalaPit[] playerAPits = new MancalaPit[BOARD_SIZE];
     private MancalaPit[] playerBPits = new MancalaPit[BOARD_SIZE];
+    
+    private int undoCount;
+    private boolean isUndoable;
+    private HistoryBoard prevBoard;
 
     /***
      * Creates a new mancala board
@@ -35,6 +36,9 @@ public class MancalaBoard {
         }
         playerAPits[BOARD_SIZE-1] = new MancalaPit(0, true);
         playerBPits[BOARD_SIZE-1] = new MancalaPit(0, true);
+        
+        prevBoard = new HistoryBoard(playerAPits, playerBPits);
+        isUndoable = false;
 
         turn = PlayerTypes.PlayerA;
     }
@@ -68,6 +72,8 @@ public class MancalaBoard {
      */
     public void nextTurn() {
     	turn = turn == PlayerTypes.PlayerA ? PlayerTypes.PlayerB : PlayerTypes.PlayerA;
+    	undoCount = 3;
+    	isUndoable = false;
     }
     
     /**
@@ -76,6 +82,7 @@ public class MancalaBoard {
      * @return True if the player gains free turn, false if not.
      */
     public boolean pickUpStones(int targetPit) {
+    	prevBoard.save(playerAPits, playerBPits);
     	boolean freeTurn = false;
     	MancalaPit[] playerPit = turn == PlayerTypes.PlayerA ? playerAPits : playerBPits;
     	MancalaPit[] opponentPit = turn == PlayerTypes.PlayerA ? playerBPits : playerAPits;
@@ -116,6 +123,7 @@ public class MancalaBoard {
         		}
     		}
     	}
+    	isUndoable = true;
     	return freeTurn;
     }
     
@@ -137,6 +145,21 @@ public class MancalaBoard {
     		}
     	}
     	return isAEmpty && isBEmpty;
+    }
+    
+    /**
+     * Go back to the previous state of board.
+     * @return true if undo the board successfully, false if not.
+     */
+    public boolean undo() {
+    	if(undoCount == 0) {
+    		return false;
+    	}
+    	this.playerAPits = prevBoard.getPitsOfPlayerA();
+    	this.playerBPits = prevBoard.getPitsOfPlayerB();
+    	undoCount--;
+    	isUndoable = false;
+    	return true;
     }
 
     /***
