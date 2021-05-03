@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 import MancalaBackend.*;
 import MancalaBackend.MancalaBoard.PitSize;
-import MancalaBackend.MancalaBoard.PlayerTypes;
 
 public class MancalaConsole {
     public static void main(String[] args) {
@@ -12,7 +11,7 @@ public class MancalaConsole {
         Scanner sc = new Scanner(System.in);
         
         System.out.println("Board setting: Pit size [3, 4]");
-        PitSize size = Integer.parseInt(sc.nextLine()) == 3 ? PitSize.Three : PitSize.Four;
+        PitSize size = Integer.parseInt(sc.nextLine()) == 3 ? (PitSize) MancalaBoard.PitSize.Three : MancalaBoard.PitSize.Four;
         
         MancalaBoard board = new MancalaBoard(size);
         while(!board.isGameOver()) {
@@ -24,7 +23,7 @@ public class MancalaConsole {
             System.out.println(player+", choose the pit.");
             
             char pit = Character.toLowerCase(sc.nextLine().charAt(0));
-            if(board.getTurn() == PlayerTypes.PlayerA) {
+            if(board.getTurn() == MancalaBoard.PlayerTypes.PlayerA) {
             	pit = (char) (pit - 'a');
             } else {
             	pit = (char) (('f'-'a')-(pit-'a'));
@@ -55,7 +54,7 @@ public class MancalaConsole {
     	System.out.println(output.toString());
     }
     
-    private static String getTurnStr(PlayerTypes t) {
-    	return t == PlayerTypes.PlayerA ? "PlayerA" : "PlayerB";
+    private static String getTurnStr(MancalaBoard.PlayerTypes t) {
+    	return t == MancalaBoard.PlayerTypes.PlayerA ? "PlayerA" : "PlayerB";
     }
 }
