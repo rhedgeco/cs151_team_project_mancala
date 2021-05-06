@@ -68,4 +68,8 @@ public class MancalaPit {
     public boolean isMancala() {
     	return isMancala;
     }
+    
+    public MancalaPit clone() {
+    	return new MancalaPit(getContainedCluster().getStoneCount(), isMancala());
+    }
 }

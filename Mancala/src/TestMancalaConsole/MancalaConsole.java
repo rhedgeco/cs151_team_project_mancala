@@ -5,6 +5,7 @@ import java.util.Scanner;
 import MancalaBackend.*;
 import MancalaBackend.MancalaBoard.PitSize;
 
+//Console Tester for test functions.
 public class MancalaConsole {
     public static void main(String[] args) {
         System.out.println("Mancala testing console");
@@ -15,6 +16,7 @@ public class MancalaConsole {
         
         MancalaBoard board = new MancalaBoard(size);
         while(!board.isGameOver()) {
+        	//Print UIs
         	System.out.println("Board:");
             printBoard(board);
             
@@ -22,13 +24,32 @@ public class MancalaConsole {
             System.out.println("Turn: " + player);
             System.out.println(player+", choose the pit.");
             
+            //Get input
             char pit = Character.toLowerCase(sc.nextLine().charAt(0));
             if(board.getTurn() == MancalaBoard.PlayerTypes.PlayerA) {
             	pit = (char) (pit - 'a');
             } else {
             	pit = (char) (('f'-'a')-(pit-'a'));
             }
+            
+            //Make action
             boolean freeTurn = board.pickUpStones(pit);
+            System.out.println("Board:");
+            printBoard(board);
+            System.out.println("Undo Count: " + board.getUndoCount());
+            System.out.println("Undo? [y, n]");
+            char undo = Character.toLowerCase(sc.nextLine().charAt(0));
+            if(undo == 'y') {
+            	boolean undoSucceed = board.undo();
+            	if(undoSucceed) {
+            		freeTurn = true;
+            		System.out.println("Undone");
+            	} else {
+            		System.out.println("Failed");
+            	}
+            	
+            }
+            
             if(!freeTurn) {
             	board.nextTurn();
             }

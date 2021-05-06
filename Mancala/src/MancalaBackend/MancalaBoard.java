@@ -38,6 +38,8 @@ public class MancalaBoard {
         playerBPits[BOARD_SIZE-1] = new MancalaPit(0, true);
         
         prevBoard = new HistoryBoard(playerAPits, playerBPits);
+        
+        undoCount = 3;
         isUndoable = false;
 
         turn = PlayerTypes.PlayerA;
@@ -83,6 +85,8 @@ public class MancalaBoard {
      */
     public boolean pickUpStones(int targetPit) {
     	prevBoard.save(playerAPits, playerBPits);
+    	isUndoable = true;
+    	
     	boolean freeTurn = false;
     	MancalaPit[] playerPit = turn == PlayerTypes.PlayerA ? playerAPits : playerBPits;
     	MancalaPit[] opponentPit = turn == PlayerTypes.PlayerA ? playerBPits : playerAPits;
@@ -123,7 +127,7 @@ public class MancalaBoard {
         		}
     		}
     	}
-    	isUndoable = true;
+    	
     	return freeTurn;
     }
     
@@ -135,12 +139,12 @@ public class MancalaBoard {
     	boolean isAEmpty = true;
     	boolean isBEmpty = true;
     	for(MancalaPit p : playerAPits) {
-    		if(p.getContainedCluster().getStoneCount() != 0) {
+    		if(!p.isMancala() && p.getContainedCluster().getStoneCount() != 0) {
     			isAEmpty = false;
     		}
     	}
     	for(MancalaPit p : playerBPits) {
-    		if(p.getContainedCluster().getStoneCount() != 0) {
+    		if(!p.isMancala() && p.getContainedCluster().getStoneCount() != 0) {
     			isBEmpty = false;
     		}
     	}
@@ -152,14 +156,24 @@ public class MancalaBoard {
      * @return true if undo the board successfully, false if not.
      */
     public boolean undo() {
-    	if(undoCount == 0) {
+    	if(undoCount == 0 || !isUndoable) {
     		return false;
     	}
-    	this.playerAPits = prevBoard.getPitsOfPlayerA();
-    	this.playerBPits = prevBoard.getPitsOfPlayerB();
+    	MancalaPit[] aPits = prevBoard.getPitsOfPlayerA();
+    	MancalaPit[] bPits = prevBoard.getPitsOfPlayerB();
+    	for(int i = 0; i < aPits.length; i++) {
+			playerAPits[i] = new MancalaPit(aPits[i].getContainedCluster().getStoneCount(), aPits[i].isMancala());
+		}
+		for(int i = 0; i < bPits.length; i++) {
+			playerBPits[i] = new MancalaPit(bPits[i].getContainedCluster().getStoneCount(), bPits[i].isMancala());
+		}
     	undoCount--;
     	isUndoable = false;
     	return true;
+    }
+    
+    public int getUndoCount() {
+    	return undoCount;
     }
 
     /***
