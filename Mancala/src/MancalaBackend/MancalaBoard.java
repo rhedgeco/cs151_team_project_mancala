@@ -172,6 +172,10 @@ public class MancalaBoard {
     	return true;
     }
     
+    /**
+     * Get the undo count.
+     * @return undoCount
+     */
     public int getUndoCount() {
     	return undoCount;
     }
