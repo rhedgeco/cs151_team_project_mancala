@@ -42,4 +42,30 @@ public class MancalaPit {
         stones.addStone(stone);
         return true;
     }
+    
+    /**
+     * Add stones to the pit. 
+     * @param stoneCluster - stones to be added
+     */
+    public void addStones(MancalaStoneCluster stoneCluster) {    
+    	for(int i = 0; i < stoneCluster.getStoneCount(); i++) {
+    		stones.addStone(new MancalaStone());
+    	}
+    }
+    
+    /**
+     * Get the access of StoneCluster.
+     * @return MancalaStoneCluster that the pit has.
+     */
+    public MancalaStoneCluster getContainedCluster() {
+    	return stones;
+    }
+    
+    /**
+     * Check if the pit is Mancala or not.
+     * @return True if the pit is Mancala, false if not.
+     */
+    public boolean isMancala() {
+    	return isMancala;
+    }
 }
