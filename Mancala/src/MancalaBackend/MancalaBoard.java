@@ -84,6 +84,7 @@ public class MancalaBoard {
      * @return True if the player gains free turn, false if not.
      */
     public boolean pickUpStones(int targetPit) {
+    	System.out.println(targetPit);
     	prevBoard.save(playerAPits, playerBPits);
     	isUndoable = true;
     	
