@@ -7,6 +7,8 @@ import MancalaGUI.Pits.NormalPit;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class MancalaPanel extends FreeLayoutPanel {
@@ -19,8 +21,9 @@ public class MancalaPanel extends FreeLayoutPanel {
     private NormalPit[] playerAPits = new NormalPit[6];
     private NormalPit[] playerBPits = new NormalPit[6];
     private JTextArea label;
+    private boolean isClickable;
 
-    public MancalaPanel(Dimension size, MancalaBoard.PitSize pitSize) {
+    public MancalaPanel(Dimension size, MancalaBoard.PitSize pitSize, MancalaBoard board) {
         super(size);
         try {
             background = ImageIO.read(getClass().getResource("Images/background.png"));
@@ -30,7 +33,7 @@ public class MancalaPanel extends FreeLayoutPanel {
 
         int psize = 3;
         if(pitSize == MancalaBoard.PitSize.Four) psize = 4;
-        board = new MancalaBoard(pitSize);
+        this.board = board;
 
         MancalaPit mancala = new MancalaPit();
         add(mancala, 0, 0);
@@ -56,6 +59,7 @@ public class MancalaPanel extends FreeLayoutPanel {
             playerAPits[i] = pit;
         }
         
+        isClickable = true;
         
         label = new JTextArea("Player A Turn! ");
         label.setFocusable(false);
@@ -63,34 +67,45 @@ public class MancalaPanel extends FreeLayoutPanel {
         label.setOpaque(false);
         Font font = label.getFont();
         label.setFont(new Font(font.getName(), Font.PLAIN, 36));
+        
         add(label, 400, 1080/4 - 25);
+    }
+    
+    public boolean passTurn() {
+    	if(!isClickable) {
+    		board.nextTurn();
+    		isClickable = true;
+    		return true;
+    	} else {
+    		return false;
+    	}
     }
 
     private void PlayerAClick(int index) {
         if(board.getTurn() != MancalaBoard.PlayerTypes.PlayerA) return;
         if(playerAPits[index].getStoneCount() == 0) return;
+        if(!isClickable) return;
         PlayerClick(index);
     }
 
     private void PlayerBClick(int index) {
         if(board.getTurn() != MancalaBoard.PlayerTypes.PlayerB) return;
         if(playerBPits[5 - index].getStoneCount() == 0) return;
+        if(!isClickable) return;
         PlayerClick(index);
     }
 
     private void PlayerClick(int index) {
         if(board.isGameOver()) return;
-        if(!board.pickUpStones(index)) { 	// If the player couldn't gain free turn, pass the turn.
-        	board.nextTurn();
-        	if(board.isEmpty()) {	//Skip opponent's turn if opponent can not make any move.
-        		board.nextTurn();
-        	}
+        if(board.pickUpStones(index)) { 	// If the player couldn't gain free turn, pass the turn.
+			isClickable = true;
+        } else {
+        	isClickable = false;
         }
-        
-        UpdateBoard();
+        updateBoard();
     }
 
-    private void UpdateBoard() {
+    public void updateBoard() {
         MancalaBackend.MancalaPit[] apits = board.getPlayerAPits();
         MancalaBackend.MancalaPit[] bpits = board.getPlayerBPits();
 
@@ -107,6 +122,11 @@ public class MancalaPanel extends FreeLayoutPanel {
         if (board.isGameOver()) labelText = "Game Over!";
         label.setText(labelText);
         label.updateUI();
+        repaint();
+    }
+    
+    public void setClickable(boolean change) {
+    	isClickable = change;
     }
 
     @Override
