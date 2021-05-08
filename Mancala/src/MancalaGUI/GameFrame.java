@@ -11,7 +11,7 @@ public class GameFrame extends JFrame {
 
     public GameFrame(MancalaBoard.PitSize size) {
         setTitle("Mancala");
-        MancalaPanel layoutPanel = new MancalaPanel(new Dimension(1080, 1080 / 2));
+        MancalaPanel layoutPanel = new MancalaPanel(new Dimension(1080, 1080 / 2), size);
         getContentPane().add(layoutPanel);
 
         pack();
