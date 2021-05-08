@@ -18,7 +18,7 @@ public class MancalaPanel extends FreeLayoutPanel {
     private MancalaPit playerBMancala;
     private NormalPit[] playerAPits = new NormalPit[6];
     private NormalPit[] playerBPits = new NormalPit[6];
-    private JLabel label;
+    private JTextArea label;
 
     public MancalaPanel(Dimension size, MancalaBoard.PitSize pitSize) {
         super(size);
@@ -55,8 +55,12 @@ public class MancalaPanel extends FreeLayoutPanel {
             add(pit, 135 + (i * 135), 540 - 135 - 12);
             playerAPits[i] = pit;
         }
-
-        label = new JLabel("Player A Turn!                      ");
+        
+        
+        label = new JTextArea("Player A Turn! ");
+        label.setFocusable(false);
+        label.setBackground(new Color(0,0,0,0));
+        label.setOpaque(false);
         Font font = label.getFont();
         label.setFont(new Font(font.getName(), Font.PLAIN, 36));
         add(label, 400, 1080/4 - 25);
@@ -76,8 +80,13 @@ public class MancalaPanel extends FreeLayoutPanel {
 
     private void PlayerClick(int index) {
         if(board.isGameOver()) return;
-        board.pickUpStones(index);
-        board.nextTurn();
+        if(!board.pickUpStones(index)) { 	// If the player couldn't gain free turn, pass the turn.
+        	board.nextTurn();
+        	if(board.isEmpty()) {	//Skip opponent's turn if opponent can not make any move.
+        		board.nextTurn();
+        	}
+        }
+        
         UpdateBoard();
     }
 
