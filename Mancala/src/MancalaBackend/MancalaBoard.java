@@ -77,6 +77,20 @@ public class MancalaBoard {
     	undoCount = 3;
     	isUndoable = false;
     }
+    /**
+     * Indicate if the player can not make any move.
+     * @return True if the player's pits are empty, false if not.
+     */
+    public boolean isEmpty() {
+    	MancalaPit[] playerPit = turn == PlayerTypes.PlayerA ? playerAPits : playerBPits;
+    	boolean isEmpty = true;
+    	for(MancalaPit p : playerPit) {
+    		if(!p.isMancala() && p.getContainedCluster().getStoneCount() != 0) {
+    			isEmpty = false;
+    		}
+    	}
+    	return isEmpty;
+    }
     
     /**
      * The player who has turn pick up stones from the certain pit and placing them.
@@ -84,7 +98,6 @@ public class MancalaBoard {
      * @return True if the player gains free turn, false if not.
      */
     public boolean pickUpStones(int targetPit) {
-    	System.out.println(targetPit);
     	prevBoard.save(playerAPits, playerBPits);
     	isUndoable = true;
     	
